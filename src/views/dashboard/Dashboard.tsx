@@ -7,12 +7,12 @@ import Logout from "../_shared/Logout";
 import DarkMode from "../_shared/DarkMode";
 import SocialIcons from "../_shared/SocialIcons";
 
+
 const Dashboard = (props: any) => {
    const [name, setName] = useState("Anonymous");
 
    useEffect(() => {
       const username: string | null = localStorage.getItem("username");
-
       if (username) {
          setName(username);
       }
