@@ -88,10 +88,6 @@ const useStyles = makeStyles(theme => ({
          opacity: 1,
       },
    },
-   avatar: {
-      color: theme.palette.getContrastText(theme.palette.warning.main),
-      backgroundColor: theme.palette.warning.main,
-   },
 }));
 
 const Header = (props: any) => {
