@@ -1,11 +1,12 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { Input } from "../_shared/Input";
 //import TextField from '@material-ui/core/TextField';
 import Button from "@material-ui/core/Button";
 //import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { SIGNUP } from "../../graphql-requests/mutations";
 import { useMutation } from "@apollo/react-hooks";
-import Header from "../_shared/Header";
+// import Header from "../_shared/Header";
 import "./Registration.css";
 //import { Loading } from "../_shared/Loading";
 
@@ -17,7 +18,7 @@ type FormData = {
    email: string;
 };
 
-export const Registration = (props: any) => {
+export const Registration = (props: FormData | any) => {
    const { register, handleSubmit, errors } = useForm<FormData>();
    const [signup] = useMutation(SIGNUP);
    const onSubmit = ({
@@ -31,7 +32,6 @@ export const Registration = (props: any) => {
          variables: { first_name, last_name, username, password, email },
       })
          .then(res => {
-            console.log(res.data);
             localStorage.setItem("token", res.data.signup.token);
             localStorage.setItem("username", res.data.signup.user.username);
          })
@@ -47,65 +47,45 @@ export const Registration = (props: any) => {
 
    return (
       <>
-         <Header />
          <div className="box">
             <form className="register-form" onSubmit={handleSubmit(onSubmit)}>
-               <label>First Name</label>
-               <input
-                  ref={register({ required: true, minLength: 2 })}
-                  type="text"
-                  name="first_name"
-                  placeholder="First Name"
-               />
+               <Input
+                  ref={register({ required: true })}
+                  type="text" name="first_name" placeholder="First Name" />
                {errors.first_name && errors.first_name.type === "required" && (
                   <p>This field is required.</p>
                )}
 
-               <label>Last Name</label>
-               <input
+               <Input
+                  props={register}
                   ref={register({ required: true })}
-                  type="text"
-                  name="last_name"
-                  placeholder="Last Name"
-               />
+                  type="text" name="last_name" placeholder="Last Name" />
                {errors.last_name && errors.last_name.type === "required" && (
                   <p>This field is required.</p>
                )}
 
-               <label>Username</label>
-               <input
+               <Input
                   ref={register({ required: true })}
-                  type="text"
-                  name="username"
-                  placeholder="Username"
-                  autoComplete="username"
-               />
+                  type="text" name="username" placeholder="Username" />
                {errors.username && errors.username.type === "required" && (
                   <p>This field is required.</p>
                )}
 
-               <label>Password</label>
-               <input
-                  ref={register({ required: true, minLength: 9 })}
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  autoComplete="current-password"
+               <Input
+                  ref={register({ required: true, minLength: props.minLength })}
+                  type="password" name="password" placeholder="Password"
+                  autoComplete="current-password" minLength={9}
                />
                {errors.password && errors.password.type === "required" && (
                   <p>This field is required.</p>
                )}
+
                {errors.password && errors.password.type === "minLength" && (
-                  <p>Password must be at least 9 characters.</p>
+                  <p>{props.placeholder} must be at least 9 characters.</p>
                )}
 
-               <label>Email</label>
-               <input
-                  ref={register({ required: true })}
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-               />
+               <Input
+                  type="email" name="email" placeholder="Email" />
                {errors.email && errors.email.type === "required" && (
                   <p>This field is required.</p>
                )}
@@ -113,12 +93,7 @@ export const Registration = (props: any) => {
                <Button variant="contained" color="primary" type="submit">
                   Submit
                </Button>
-
-               <br />
             </form>
-            <br />
-
-            <br />
          </div>
       </>
    );
