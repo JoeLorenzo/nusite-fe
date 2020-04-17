@@ -16,6 +16,7 @@ interface RegistrationFormData {
 }
 
 export const Registration = (props: RegistrationFormData | any) => {
+
    const [signup] = useMutation(SIGNUP);
    const onSubmit = ({
       first_name,
@@ -41,6 +42,7 @@ export const Registration = (props: RegistrationFormData | any) => {
 
    return (
       <>
+
          <h2> Registration </h2>
          <div className="box">
             <Form className="register-form" onSubmit={onSubmit}>

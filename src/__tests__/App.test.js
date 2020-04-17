@@ -20,6 +20,7 @@ test("It renders 'Home' component when URL is '/'", () => {
    expect(tagLine.tagName).toMatch(/p/i);
 });
 
+
 test("It renders 'Login' component when URL is '/login'", () => {
    const mockLogin = {
       request: {

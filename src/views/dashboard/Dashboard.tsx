@@ -18,6 +18,7 @@ const Dashboard = (props: any) => {
       <div className="App">
          <Header />
          <main className="section-main">
+
             <br />
             <DarkMode />
             <br />

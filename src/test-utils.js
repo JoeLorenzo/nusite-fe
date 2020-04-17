@@ -10,9 +10,11 @@ function MutationObserver(callback) {
 }
 global.MutationObserver = jest.fn(MutationObserver);
 
+
 const mockSpies = {
    setDarkMode: jest.fn(),
 };
+
 
 const AllTheProviders = ({ children }) => (
    <ThemeContext.Provider
