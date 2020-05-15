@@ -6,13 +6,14 @@ import { makeStyles } from "@material-ui/core/styles";
 import useTheme from "@material-ui/core/styles/useTheme";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { Link, withRouter } from "react-router-dom";
-import logo from "../../../images/cover.png";
-import { getToken } from "../../util/TokenHelpers";
+import logo from "../../../images/logo.svg";
+import { getToken } from "../../util/useLocalStorage";
 import ElevationScroll from "../ElevationScroll";
 import HeaderAvatar from "./HeaderAvatar";
 import HeaderTabs from "./HeaderTabs";
 import HeaderDrawer from "./HeaderDrawer";
 import { useRoutes } from "../../util/routes";
+import DynamicScrollToTop from "../DynamicScrollToTop";
 //import { ThemeContext } from "../../context/contexts";
 
 //styling
@@ -32,19 +33,18 @@ const useStyles = makeStyles(theme => ({
    },
    //This will set a height for the logo
    logo: {
-      height: "7em",
+      height: "3.8em",
       [theme.breakpoints.down("md")]: {
-         height: "7em",
+         height: "3.8em",
       },
       [theme.breakpoints.down("xs")]: {
-         height: "5.5",
+         height: "3.5",
       },
    },
 }));
 
 const Header = (props: any) => {
    const [value, setValue] = useState(0);
-   // const [openDrawer, setOpenDrawer] = useState(false);
    //material ui hooks
    const classes = useStyles();
    const theme = useTheme();
@@ -69,6 +69,7 @@ const Header = (props: any) => {
 
    return (
       <>
+         <DynamicScrollToTop />
          <ElevationScroll>
             <AppBar className={classes.appBar} position="fixed">
                <Toolbar disableGutters>
@@ -83,6 +84,7 @@ const Header = (props: any) => {
                         className={classes.logo}
                         src={logo}
                         alt="company logo"
+                        data-testid="header-logo"
                      />
                   </Button>
                   {matches ? (

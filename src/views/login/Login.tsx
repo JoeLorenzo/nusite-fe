@@ -1,51 +1,151 @@
-import React from "react";
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
 import { Form } from "../_shared/Form";
 import { Input } from "../_shared/Input";
-import Button from "@material-ui/core/Button";
-import "./Login.css";
+import { Button, Grid, Typography } from "@material-ui/core/";
 import { LOGIN } from "../../graphql-requests/mutations";
 import { useMutation } from "@apollo/react-hooks";
+import Loader from "../_shared/Loader";
+import { LoginFormData } from "../../types/FormTypes";
+import { makeStyles } from "@material-ui/core/styles";
+import {
+   loginStart,
+   loginSuccess,
+   authError,
+} from "../../context/user/actions";
+import UserContext from "../../context/user/context";
+import { setToken, setUserId } from "../util/useLocalStorage";
+import { OAuthContainer } from "../_shared/OAuth/OAuthStyled";
+import { OAuthButton } from "../_shared/OAuthButton";
+import { providers } from "../../types/OAuthTypes";
 
-interface LoginFormData {
-   email: string;
-   password: string;
-}
+const useStyles = makeStyles(theme => ({
+   container: {
+      height: "1000px",
+      backgroundImage: `url(${require("../../images/register.jpeg")})`,
+      backgroundSize: "cover",
+      backgroundPosition: "right",
+      [theme.breakpoints.down("md")]: {
+         height: "700px",
+         backgroundPosition: "top right",
+      },
+   },
+   loginContainer: {
+      backgroundColor: theme.palette.common.white,
+      width: "500px",
+      border: "1px",
+      color: theme.palette.primary.light,
+      borderStyle: "solid",
+      borderRadius: "25px",
+      [theme.breakpoints.down("md")]: {
+         maxWidth: "100%",
+      },
+   },
+   formContainer: {
+      padding: "50px",
+      flexDirection: "column",
+      display: "flex",
+      alignItems: "center",
+      justify: "center",
+      alignContent: "center",
+   },
+   textField: {
+      marginBottom: "3em",
+      [theme.breakpoints.down("md")]: {
+         width: "100%",
+      },
+   },
+}));
 
-export const Login = (props: LoginFormData | any) => {
-   console.log(props);
+export const Login: React.FC = (props: LoginFormData | any) => {
+   const { userData, userDispatch } = useContext(UserContext);
    const [login] = useMutation(LOGIN);
+   const classes = useStyles();
    const onSubmit = ({ email, password }: LoginFormData) => {
+      userDispatch(loginStart());
+
       login({ variables: { email: email, password: password } })
          .then(res => {
-            localStorage.setItem("token", res.data.login.token);
+            userDispatch(loginSuccess(res.data.login.user));
+
+            setToken(res.data.login.token);
             localStorage.setItem("username", res.data.login.user.username);
-            props.history.push("/home");
-            console.log("Success: ", res.data);
+            setUserId(res.data.login.user.id);
          })
-         .catch(err => err.message);
+         .then(data => {
+            props.history.push("/home");
+            console.log(`Welcome `);
+         })
+         .catch(err => {
+            userDispatch(authError(err));
+            alert(err.message);
+         });
    };
 
    return (
-      <>
-         <h2> Login </h2>
-         <Form className="login-form" onSubmit={onSubmit}>
-            <Input name="email" placeholder="Email" />
-            <Input
-               name="password"
-               placeholder="Password"
-               autoComplete="current-password"
-               type="password"
-               minLength={9}
-            />
-            <Button
-               variant="contained"
-               color="primary"
-               type="submit"
-               value="submit"
+      <Grid
+         container
+         direction="column"
+         alignItems="center"
+         className={`main-container ${classes.container}`}
+      >
+         <Grid
+            container
+            direction="column"
+            className={classes.loginContainer}
+            alignItems="center"
+         >
+            <Grid item>
+               <Typography variant="h1" align="center">
+                  Login
+               </Typography>
+            </Grid>
+            <Form
+               className={classes.formContainer}
+               data-testid="login-form"
+               onSubmit={onSubmit}
             >
-               Submit
-            </Button>
-         </Form>
-      </>
+               <Input
+                  name="email"
+                  label="Email"
+                  type="email"
+                  required
+                  fullWidth
+                  className={classes.textField}
+               />
+               <Input
+                  name="password"
+                  label="Password"
+                  autoComplete="current-password"
+                  type="password"
+                  minLength={9}
+                  fullWidth
+                  required
+                  className={classes.textField}
+                  helperText="password must be at least 9 characters"
+               />
+               <Link to="/initiate">Forgot your password?</Link>
+               {userData.isAuthorizing ? (
+                  <Loader />
+               ) : (
+                  <Button variant="contained" color="primary" type="submit">
+                     <Typography variant="body1" color="secondary">
+                        Login
+                     </Typography>
+                  </Button>
+               )}
+            </Form>
+            <Grid item>
+               <Typography variant="body1">-OR-</Typography>
+            </Grid>
+            <Grid item>
+               <OAuthContainer>
+                  <OAuthButton provider={providers.LINKEDIN} />
+                  {/* <OAuthButton provider={providers.FACEBOOK} /> */}
+                  <OAuthButton provider={providers.GOOGLE} />
+               </OAuthContainer>
+            </Grid>
+         </Grid>
+      </Grid>
    );
 };
