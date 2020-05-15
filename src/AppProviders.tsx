@@ -13,9 +13,7 @@ import UserContext, { ANONYMOUS_USER } from "./context/user/context";
 const cache = new InMemoryCache();
 
 const client = new ApolloClient({
-   uri:
-      process.env.STAGING_LINK ||
-      "https://partnerd-staging.herokuapp.com/graphql",
+   uri: process.env.GRAPHQL_API_URL,
    cache,
 });
 
