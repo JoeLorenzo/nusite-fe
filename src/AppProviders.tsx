@@ -13,7 +13,7 @@ import UserContext, { ANONYMOUS_USER } from "./context/user/context";
 const cache = new InMemoryCache();
 
 const client = new ApolloClient({
-   uri: process.env.GRAPHQL_API_URL,
+   uri: process.env.REACT_APP_GRAPHQL_API_URL,
    cache,
 });
 
