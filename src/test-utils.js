@@ -10,6 +10,13 @@ function MutationObserver(callback) {
 }
 global.MutationObserver = jest.fn(MutationObserver);
 
+function MutationObserver(callback) {
+   this.observe = jest.fn();
+   this.disconnect = jest.fn();
+   this.takeRecords = jest.fn();
+}
+global.MutationObserver = jest.fn(MutationObserver);
+
 const mockSpies = {
    setDarkMode: jest.fn(),
    userDispatch: jest.fn(),
